@@ -280,13 +280,18 @@ Future<void> _onReceiveMessageFromPort(Map<String, dynamic> firebaseMessageMap) 
     ),
   );
 
-  await _flutterLocalNotificationsPlugin.show(
-    showId,  // id
-    data['title'],  // title
-    data['message'], // body
-    platformChannelSpecifics, // notificationDetails
-    payload: data['talkjs'],
-  );
+  final String? title = data['title'];
+  final String? message = data['message'];
+
+  if (title?.isNotEmpty == true || message?.isNotEmpty == true) {
+    await _flutterLocalNotificationsPlugin.show(
+      showId,  // id
+      title,   // title
+      message, // body
+      platformChannelSpecifics, // notificationDetails
+      payload: data['talkjs'],
+    );
+  }
 }
 
 // The commented code is for when we will upgrade to flutter_local_notifications version 10

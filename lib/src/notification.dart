@@ -276,6 +276,7 @@ Future<void> onReceiveMessage(dynamic data) async {
       ledColor: _androidChannel!.lightColor,
       visibility: _androidChannel!.visibility?.toLocalNotification(),
       styleInformation: styleInformation,
+      icon: '@drawable/ic_notification',
     ),
   );
 
@@ -415,6 +416,7 @@ Future<void> _onReceiveMessageFromPort(Map<String, dynamic> firebaseMessageMap) 
       ledColor: _androidChannel!.lightColor,
       visibility: _androidChannel!.visibility?.toLocalNotification(),
       styleInformation: styleInformation,
+      icon: '@drawable/ic_notification',
     ),
   );
 

@@ -288,8 +288,8 @@ Future<void> onReceiveMessage(dynamic data) async {
     iOS: const DarwinNotificationDetails(presentAlert: true),
   );
 
-  final String? title = data['title'];
-  final String? message = data['message'];
+  final String? title = data['title'] ?? data['notification']['title'];
+  final String? message = data['message'] ?? data['notification']['body'];
 
   print('onReceiveMessage before if');
 
@@ -435,8 +435,8 @@ Future<void> _onReceiveMessageFromPort(Map<String, dynamic> firebaseMessageMap) 
     iOS: const DarwinNotificationDetails(presentAlert: true),
   );
 
-  final String? title = data['title'];
-  final String? message = data['message'];
+  final String? title = data['title'] ?? data['notification']['title'];
+  final String? message = data['message'] ?? data['notification']['body'];
 
   print('onReceiveMessage before if');
 

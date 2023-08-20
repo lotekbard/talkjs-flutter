@@ -292,6 +292,8 @@ Future<void> onReceiveMessage(dynamic data) async {
   final String? message = data['message'] ?? data['notification']['body'];
 
   if (Platform.isIOS) {
+    await Future.delayed(const Duration(seconds: 1));
+
     final activeNotifications = await _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
         ?.getActiveNotifications();

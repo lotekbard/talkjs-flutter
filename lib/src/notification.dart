@@ -265,7 +265,7 @@ Future<void> onReceiveMessage(dynamic data) async {
       sound = RawResourceAndroidNotificationSound(_androidChannel!.playSound);
     }
 
-    androidNotificationsDetails  = AndroidNotificationDetails(
+    androidNotificationsDetails = AndroidNotificationDetails(
       _androidChannel!.channelId,
       _androidChannel!.channelName,
       channelDescription: _androidChannel!.channelDescription,
@@ -290,6 +290,18 @@ Future<void> onReceiveMessage(dynamic data) async {
 
   final String? title = data['title'] ?? data['notification']['title'];
   final String? message = data['message'] ?? data['notification']['body'];
+
+  if (Platform.isIOS) {
+    final activeNotifications = await _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.getActiveNotifications();
+
+    if (activeNotifications != null) {
+      if (activeNotifications.any((element) => element.title == title && element.body == message)) {
+        return;
+      }
+    }
+  }
 
   if (title?.isNotEmpty == true || message?.isNotEmpty == true) {
     await _flutterLocalNotificationsPlugin.show(
@@ -433,7 +445,7 @@ Future<void> _onReceiveMessageFromPort(Map<String, dynamic> firebaseMessageMap) 
 
   final String? title = data['title'] ?? data['notification']['title'];
   final String? message = data['message'] ?? data['notification']['body'];
-  
+
 
   if ((title?.isNotEmpty == true || message?.isNotEmpty == true) && data['talkjs'] != null) {
     await _flutterLocalNotificationsPlugin.show(

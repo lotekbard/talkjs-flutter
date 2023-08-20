@@ -283,7 +283,11 @@ Future<void> onReceiveMessage(dynamic data) async {
   final String? title = data['title'];
   final String? message = data['message'];
 
-  if (title?.isNotEmpty == true || message?.isNotEmpty == true) {
+  print('onReceiveMessage before if');
+
+  if ((title?.isNotEmpty == true || message?.isNotEmpty == true) && data['talkjs'] != null) {
+    print('onReceiveMessage after if');
+
     await _flutterLocalNotificationsPlugin.show(
       showId, // id
       title, // title
@@ -423,7 +427,11 @@ Future<void> _onReceiveMessageFromPort(Map<String, dynamic> firebaseMessageMap) 
   final String? title = data['title'];
   final String? message = data['message'];
 
-  if (title?.isNotEmpty == true || message?.isNotEmpty == true) {
+  print('onReceiveMessage before if');
+
+  if ((title?.isNotEmpty == true || message?.isNotEmpty == true) && data['talkjs'] != null) {
+    print('onReceiveMessage after if');
+
     await _flutterLocalNotificationsPlugin.show(
       showId, // id
       title, // title
@@ -544,4 +552,3 @@ Future<void> registerIOSPushNotificationHandlers(IOSPermissions iosPermissions) 
     badge: iosPermissions.badge,
   ));
 }
-

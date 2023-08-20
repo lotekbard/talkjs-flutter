@@ -253,31 +253,35 @@ Future<void> onReceiveMessage(dynamic data) async {
     styleInformation = DefaultStyleInformation(false, false);
   }
 
-  // We default to not playing sounds, unless a non-empty string is provided
-  final playSound = _androidChannel!.playSound.isNotEmpty;
-  RawResourceAndroidNotificationSound? sound;
+  AndroidNotificationDetails? androidNotificationsDetails;
 
-  // We use the string 'default' for the default sound (for compatibility with the React Natve SDK)
-  if (playSound && (_androidChannel!.playSound != 'default')) {
-    sound = RawResourceAndroidNotificationSound(_androidChannel!.playSound);
+  if (Platform.isAndroid) {
+    // We default to not playing sounds, unless a non-empty string is provided
+    final playSound = _androidChannel!.playSound.isNotEmpty;
+    RawResourceAndroidNotificationSound? sound;
+
+    // We use the string 'default' for the default sound (for compatibility with the React Natve SDK)
+    if (playSound && (_androidChannel!.playSound != 'default')) {
+      sound = RawResourceAndroidNotificationSound(_androidChannel!.playSound);
+    }
+
+    androidNotificationsDetails  = AndroidNotificationDetails(
+      _androidChannel!.channelId,
+      _androidChannel!.channelName,
+      channelDescription: _androidChannel!.channelDescription,
+      importance: _androidChannel!.importance?.toLocalNotification() ?? Importance.high,
+      playSound: playSound,
+      sound: sound,
+      enableVibration: _androidChannel!.vibrate ?? true,
+      vibrationPattern: _androidChannel!.vibrationPattern,
+      channelShowBadge: _androidChannel!.badge ?? true,
+      enableLights: _androidChannel!.lights ?? false,
+      ledColor: _androidChannel!.lightColor,
+      visibility: _androidChannel!.visibility?.toLocalNotification(),
+      styleInformation: styleInformation,
+      icon: '@drawable/ic_notification',
+    );
   }
-
-  final AndroidNotificationDetails? androidNotificationsDetails = Platform.isAndroid ? AndroidNotificationDetails(
-    _androidChannel!.channelId,
-    _androidChannel!.channelName,
-    channelDescription: _androidChannel!.channelDescription,
-    importance: _androidChannel!.importance?.toLocalNotification() ?? Importance.high,
-    playSound: playSound,
-    sound: sound,
-    enableVibration: _androidChannel!.vibrate ?? true,
-    vibrationPattern: _androidChannel!.vibrationPattern,
-    channelShowBadge: _androidChannel!.badge ?? true,
-    enableLights: _androidChannel!.lights ?? false,
-    ledColor: _androidChannel!.lightColor,
-    visibility: _androidChannel!.visibility?.toLocalNotification(),
-    styleInformation: styleInformation,
-    icon: '@drawable/ic_notification',
-  ) : null;
 
   final platformChannelSpecifics = NotificationDetails(
     android: androidNotificationsDetails,

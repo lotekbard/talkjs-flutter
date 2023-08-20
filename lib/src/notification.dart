@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:convert';
@@ -261,23 +262,26 @@ Future<void> onReceiveMessage(dynamic data) async {
     sound = RawResourceAndroidNotificationSound(_androidChannel!.playSound);
   }
 
+  final AndroidNotificationDetails? androidNotificationsDetails = Platform.isAndroid ? AndroidNotificationDetails(
+    _androidChannel!.channelId,
+    _androidChannel!.channelName,
+    channelDescription: _androidChannel!.channelDescription,
+    importance: _androidChannel!.importance?.toLocalNotification() ?? Importance.high,
+    playSound: playSound,
+    sound: sound,
+    enableVibration: _androidChannel!.vibrate ?? true,
+    vibrationPattern: _androidChannel!.vibrationPattern,
+    channelShowBadge: _androidChannel!.badge ?? true,
+    enableLights: _androidChannel!.lights ?? false,
+    ledColor: _androidChannel!.lightColor,
+    visibility: _androidChannel!.visibility?.toLocalNotification(),
+    styleInformation: styleInformation,
+    icon: '@drawable/ic_notification',
+  ) : null;
+
   final platformChannelSpecifics = NotificationDetails(
-    android: AndroidNotificationDetails(
-      _androidChannel!.channelId,
-      _androidChannel!.channelName,
-      channelDescription: _androidChannel!.channelDescription,
-      importance: _androidChannel!.importance?.toLocalNotification() ?? Importance.high,
-      playSound: playSound,
-      sound: sound,
-      enableVibration: _androidChannel!.vibrate ?? true,
-      vibrationPattern: _androidChannel!.vibrationPattern,
-      channelShowBadge: _androidChannel!.badge ?? true,
-      enableLights: _androidChannel!.lights ?? false,
-      ledColor: _androidChannel!.lightColor,
-      visibility: _androidChannel!.visibility?.toLocalNotification(),
-      styleInformation: styleInformation,
-      icon: '@drawable/ic_notification',
-    ),
+    android: androidNotificationsDetails,
+    iOS: const DarwinNotificationDetails(presentAlert: true),
   );
 
   final String? title = data['title'];
@@ -289,10 +293,10 @@ Future<void> onReceiveMessage(dynamic data) async {
     print('onReceiveMessage after if');
 
     await _flutterLocalNotificationsPlugin.show(
-      showId, // id
-      title, // title
-      message, // body
-      platformChannelSpecifics, // notificationDetails
+      showId,
+      title,
+      message,
+      platformChannelSpecifics,
       payload: data['talkjs'],
     );
   }
@@ -405,23 +409,26 @@ Future<void> _onReceiveMessageFromPort(Map<String, dynamic> firebaseMessageMap) 
     sound = RawResourceAndroidNotificationSound(_androidChannel!.playSound);
   }
 
+  final AndroidNotificationDetails? androidNotificationsDetails = Platform.isAndroid ? AndroidNotificationDetails(
+    _androidChannel!.channelId,
+    _androidChannel!.channelName,
+    channelDescription: _androidChannel!.channelDescription,
+    importance: _androidChannel!.importance?.toLocalNotification() ?? Importance.high,
+    playSound: playSound,
+    sound: sound,
+    enableVibration: _androidChannel!.vibrate ?? true,
+    vibrationPattern: _androidChannel!.vibrationPattern,
+    channelShowBadge: _androidChannel!.badge ?? true,
+    enableLights: _androidChannel!.lights ?? false,
+    ledColor: _androidChannel!.lightColor,
+    visibility: _androidChannel!.visibility?.toLocalNotification(),
+    styleInformation: styleInformation,
+    icon: '@drawable/ic_notification',
+  ) : null;
+
   final platformChannelSpecifics = NotificationDetails(
-    android: AndroidNotificationDetails(
-      _androidChannel!.channelId,
-      _androidChannel!.channelName,
-      channelDescription: _androidChannel!.channelDescription,
-      importance: _androidChannel!.importance?.toLocalNotification() ?? Importance.high,
-      playSound: playSound,
-      sound: sound,
-      enableVibration: _androidChannel!.vibrate ?? true,
-      vibrationPattern: _androidChannel!.vibrationPattern,
-      channelShowBadge: _androidChannel!.badge ?? true,
-      enableLights: _androidChannel!.lights ?? false,
-      ledColor: _androidChannel!.lightColor,
-      visibility: _androidChannel!.visibility?.toLocalNotification(),
-      styleInformation: styleInformation,
-      icon: '@drawable/ic_notification',
-    ),
+    android: androidNotificationsDetails,
+    iOS: const DarwinNotificationDetails(presentAlert: true),
   );
 
   final String? title = data['title'];
@@ -433,10 +440,10 @@ Future<void> _onReceiveMessageFromPort(Map<String, dynamic> firebaseMessageMap) 
     print('onReceiveMessage after if');
 
     await _flutterLocalNotificationsPlugin.show(
-      showId, // id
-      title, // title
-      message, // body
-      platformChannelSpecifics, // notificationDetails
+      showId,
+      title,
+      message,
+      platformChannelSpecifics,
       payload: data['talkjs'],
     );
   }
@@ -522,6 +529,10 @@ Future<void> registerAndroidPushNotificationHandlers(AndroidChannel androidChann
 Future<void> _onPush(String name, ApnsRemoteMessage message) async {
   final payload = message.payload;
   print('📘 _onPush $name: ${payload["notification"]?["title"]}');
+
+  if (name == 'onMessage') {
+    await onReceiveMessage(message.payload);
+  }
 
   final action = UNNotificationAction.getIdentifier(payload['data']);
 

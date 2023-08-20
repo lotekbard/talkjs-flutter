@@ -291,17 +291,13 @@ Future<void> onReceiveMessage(dynamic data) async {
   final String? title = data['title'] ?? data['notification']['title'];
   final String? message = data['message'] ?? data['notification']['body'];
 
-  print('onReceiveMessage before if');
-
-  if ((title?.isNotEmpty == true || message?.isNotEmpty == true) && data['talkjs'] != null) {
-    print('onReceiveMessage after if');
-
+  if (title?.isNotEmpty == true || message?.isNotEmpty == true) {
     await _flutterLocalNotificationsPlugin.show(
       showId,
       title,
       message,
       platformChannelSpecifics,
-      payload: data['talkjs'],
+      payload: data['talkjs'] ?? data['notification']['talkjs'],
     );
   }
 }
@@ -437,12 +433,9 @@ Future<void> _onReceiveMessageFromPort(Map<String, dynamic> firebaseMessageMap) 
 
   final String? title = data['title'] ?? data['notification']['title'];
   final String? message = data['message'] ?? data['notification']['body'];
-
-  print('onReceiveMessage before if');
+  
 
   if ((title?.isNotEmpty == true || message?.isNotEmpty == true) && data['talkjs'] != null) {
-    print('onReceiveMessage after if');
-
     await _flutterLocalNotificationsPlugin.show(
       showId,
       title,

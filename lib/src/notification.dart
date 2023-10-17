@@ -435,10 +435,10 @@ Future<void> _onReceiveMessageFromPort(Map<String, dynamic> firebaseMessageMap) 
 }
 
 // The commented code is for when we will upgrade to flutter_local_notifications version 10
-void _onSelectNotification(NotificationResponse details) {
+void onSelectNotification(NotificationResponse details) {
   final payload = details.payload;
 
-  print('📘 _onSelectNotification: $payload');
+  print('📘 onSelectNotification: $payload');
 
   if (payload != null) {
     final Map<String, dynamic> talkjsData = json.decode(payload);
@@ -467,7 +467,7 @@ Future<void> registerAndroidPushNotificationHandlers(AndroidChannel androidChann
     InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
     ),
-    onDidReceiveNotificationResponse: _onSelectNotification,
+    onDidReceiveNotificationResponse: onSelectNotification,
   );
 
   _androidChannel = androidChannel;
@@ -544,4 +544,3 @@ Future<void> registerIOSPushNotificationHandlers(IOSPermissions iosPermissions) 
     badge: iosPermissions.badge,
   ));
 }
-
